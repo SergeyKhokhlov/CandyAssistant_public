@@ -1,0 +1,1 @@
+pyuic5 skills_CandyMarket.ui -o skills_CandyMarket.py
