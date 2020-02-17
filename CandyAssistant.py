@@ -3,6 +3,8 @@
 import sys
 from PyQt5.QtCore import Qt
 from PyQt5 import QtCore, QtGui, QtWidgets, QtMultimedia
+import requests
+import json
 import speech_recognition as sr
 import keyboard
 import os, requests
@@ -36,6 +38,7 @@ level = 1
 message_candy = ''
 message_user = ''
 name_user = "You"
+translator = 1
 message_user_array = []
 interface = 1
 sounds_and_voices = 1
@@ -185,7 +188,7 @@ class CandyMarket(QWidget):
     def saveSettings(self):
         global candycash
         global level, sounds_and_voices
-        global interface, name_user, icon_user
+        global interface, name_user, icon_user, translator
         con = sqlite3.connect('CandyBase.db')
         cur = con.cursor()
         sql = "DELETE FROM resources"
@@ -196,7 +199,7 @@ class CandyMarket(QWidget):
         cur.execute(sql)
         info_database = [str(candycash), str(level)]
         cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
-        cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator,))
         cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
         con.commit()
         with zipfile.ZipFile('CandyBase.zip', 'w') as myzip:
@@ -353,7 +356,7 @@ class Interface_candymarket_BUYiFace(QWidget):
     def saveSettings(self):
         global candycash
         global level, sounds_and_voices
-        global interface, name_user, icon_user
+        global interface, name_user, icon_user, translator
         con = sqlite3.connect('CandyBase.db')
         cur = con.cursor()
         sql = "DELETE FROM resources"
@@ -364,7 +367,7 @@ class Interface_candymarket_BUYiFace(QWidget):
         cur.execute(sql)
         info_database = [str(candycash), str(level)]
         cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
-        cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator,))
         cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
         con.commit()
         with zipfile.ZipFile('CandyBase.zip', 'w') as myzip:
@@ -518,7 +521,7 @@ class CandyMarket_SoundsAndVoices(QWidget):
     def saveSettings(self):
         global candycash
         global level, sounds_and_voices
-        global interface, name_user, icon_user
+        global interface, name_user, icon_user, translator
         con = sqlite3.connect('CandyBase.db')
         cur = con.cursor()
         sql = "DELETE FROM resources"
@@ -529,7 +532,7 @@ class CandyMarket_SoundsAndVoices(QWidget):
         cur.execute(sql)
         info_database = [str(candycash), str(level)]
         cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
-        cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator,))
         cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
         con.commit()
         with zipfile.ZipFile('CandyBase.zip', 'w') as myzip:
@@ -546,6 +549,7 @@ class CandyMarket_skills(QWidget):
         self.candycash_print()
         self.setWindowIcon(QtGui.QIcon('logo_CA.ico'))
         self.pushButton_4.clicked.connect(self.back_in_candymarket)
+        self.pushButton_3.clicked.connect(self.candyTranslator)
         self.settings = QSettings('CandyAssistent', 'CandyCompany', self)
         self.loadSettings()
 
@@ -631,6 +635,19 @@ class CandyMarket_skills(QWidget):
         self.open_iFace = CandyMarket()
         self.open_iFace.show()
 
+    def candyTranslator(self):
+        global candycash, interface, translator
+        if candycash >= 160 or translator == 2:
+            if translator == 1:
+                candycash -= 160
+            translator = 2
+            self.close()
+            if interface == 1:
+                self.open_iFace = Interface1()
+            elif interface == 2:
+                self.open_iFace = Interface2()
+            self.open_iFace.show()
+
     def candycash_print(self):
         global candycash
         self.label_2.setText(str(candycash))
@@ -646,7 +663,7 @@ class CandyMarket_skills(QWidget):
 
     def saveSettings(self):
         global candycash
-        global level, sounds_and_voices
+        global level, sounds_and_voices, translator
         global interface, name_user, icon_user
         con = sqlite3.connect('CandyBase.db')
         cur = con.cursor()
@@ -658,7 +675,7 @@ class CandyMarket_skills(QWidget):
         cur.execute(sql)
         info_database = [str(candycash), str(level)]
         cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
-        cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator,))
         cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
         con.commit()
         with zipfile.ZipFile('CandyBase.zip', 'w') as myzip:
@@ -874,7 +891,7 @@ class Interface1(QtWidgets.QMainWindow):
 
     def saveSettings(self):
         global candycash
-        global level, sounds_and_voices
+        global level, sounds_and_voices, translator
         global interface, name_user, icon_user
         con = sqlite3.connect('CandyBase.db')
         cur = con.cursor()
@@ -885,7 +902,7 @@ class Interface1(QtWidgets.QMainWindow):
         sql = "DELETE FROM candymarket"
         cur.execute(sql)
         info_database = [str(candycash), str(level)]
-        cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator,))
         cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
         cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
         con.commit()
@@ -1091,7 +1108,7 @@ class Interface_1_keyboard(QWidget):
 
     def saveSettings(self):
         global candycash
-        global level, sounds_and_voices
+        global level, sounds_and_voices, translator
         global interface, name_user, icon_user
         con = sqlite3.connect('CandyBase.db')
         cur = con.cursor()
@@ -1102,7 +1119,7 @@ class Interface_1_keyboard(QWidget):
         sql = "DELETE FROM candymarket"
         cur.execute(sql)
         info_database = [str(candycash), str(level)]
-        cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator))
         cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
         cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
         con.commit()
@@ -1245,7 +1262,9 @@ class Interface2(QtWidgets.QMainWindow):
                 "pac" in message_user and "мэн" in message_user) or (
                 "пак" in message_user and "man" in message_user) or (
                 "пак" in message_user and "ман" in message_user) or (
-                "пак" in message_user and "мэн" in message_user):
+                "пак" in message_user and "мэн" in message_user) or (
+                "пэк" in message_user and "мэн" in message_user) or (
+                "пэк" in message_user and "ман" in message_user):
             self.candycash_print()
             self.level_print()
 
@@ -1327,7 +1346,7 @@ class Interface2(QtWidgets.QMainWindow):
 
     def saveSettings(self):
         global candycash
-        global level, sounds_and_voices
+        global level, sounds_and_voices, translator
         global interface, name_user, icon_user
         con = sqlite3.connect('CandyBase.db')
         cur = con.cursor()
@@ -1338,7 +1357,7 @@ class Interface2(QtWidgets.QMainWindow):
         sql = "DELETE FROM candymarket"
         cur.execute(sql)
         info_database = [str(candycash), str(level)]
-        cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator))
         cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
         cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
         con.commit()
@@ -1544,7 +1563,7 @@ class Interface2_keyboard(QWidget):
             self.setGeometry(self.settings.value('geometry'))
 
     def saveSettings(self):
-        global candycash
+        global candycash, translator
         global level, sounds_and_voices
         global interface, name_user, icon_user
         con = sqlite3.connect('CandyBase.db')
@@ -1557,11 +1576,164 @@ class Interface2_keyboard(QWidget):
         cur.execute(sql)
         info_database = [str(candycash), str(level)]
         cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
-        cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator,))
         cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
         con.commit()
         with zipfile.ZipFile('CandyBase.zip', 'w') as myzip:
             myzip.write('CandyBase.db')
+
+
+class Translator(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setupUi(self)
+        self.pushButton.clicked.connect(self.program_operation)
+        self.settings = QSettings('CandyAssistent', 'CandyCompany', self)
+        self.loadSettings()
+
+    def setupUi(self, Form):
+        Form.setObjectName("Form")
+        Form.setFixedSize(731, 524)
+        Form.setStyleSheet("QWidget {background-color: white;}")
+        self.label = QtWidgets.QLabel(Form)
+        self.label.setGeometry(QtCore.QRect(70, 30, 91, 71))
+        font = QtGui.QFont()
+        font.setFamily("Viner Hand ITC")
+        font.setPointSize(28)
+        self.label.setFont(font)
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(Form)
+        self.label_2.setGeometry(QtCore.QRect(30, 10, 41, 91))
+        font = QtGui.QFont()
+        font.setPointSize(48)
+        self.label_2.setFont(font)
+        self.label_2.setStyleSheet("QLabel {color: purple;}")
+        self.label_2.setObjectName("label_2")
+        self.label_3 = QtWidgets.QLabel(Form)
+        self.label_3.setGeometry(QtCore.QRect(160, 10, 41, 91))
+        font = QtGui.QFont()
+        font.setPointSize(48)
+        self.label_3.setFont(font)
+        self.label_3.setStyleSheet("QLabel {color: purple;}")
+        self.label_3.setObjectName("label_3")
+        self.label_5 = QtWidgets.QLabel(Form)
+        self.label_5.setGeometry(QtCore.QRect(140, 130, 111, 41))
+        font = QtGui.QFont()
+        font.setPointSize(22)
+        self.label_5.setFont(font)
+        self.label_5.setObjectName("label_5")
+        self.label_6 = QtWidgets.QLabel(Form)
+        self.label_6.setGeometry(QtCore.QRect(460, 130, 161, 41))
+        font = QtGui.QFont()
+        font.setPointSize(22)
+        self.label_6.setFont(font)
+        self.label_6.setObjectName("label_6")
+        self.textEdit = QtWidgets.QTextEdit(Form)
+        self.textEdit.setGeometry(QtCore.QRect(30, 190, 321, 191))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.textEdit.setFont(font)
+        self.textEdit.setStyleSheet("QTextEdit {border: 2px solid purple;;}")
+        self.textEdit.setObjectName("textEdit")
+        self.textEdit_2 = QtWidgets.QTextEdit(Form)
+        self.textEdit_2.setGeometry(QtCore.QRect(380, 190, 321, 191))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.textEdit_2.setFont(font)
+        self.textEdit_2.setStyleSheet("QTextEdit {border: 2px solid purple;;}")
+        self.textEdit_2.setObjectName("textEdit_2")
+        self.pushButton = QtWidgets.QPushButton(Form)
+        self.pushButton.setGeometry(QtCore.QRect(260, 420, 201, 71))
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        font.setPointSize(12)
+        self.pushButton.setFont(font)
+        self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.pushButton.setStyleSheet("QPushButton {border: 2px solid purple;}")
+        self.pushButton.setObjectName("pushButton")
+        self.label_4 = QtWidgets.QLabel(Form)
+        self.label_4.setGeometry(QtCore.QRect(190, 40, 161, 51))
+        font = QtGui.QFont()
+        font.setFamily("Viner Hand ITC")
+        font.setPointSize(28)
+        self.label_4.setFont(font)
+        self.label_4.setObjectName("label_4")
+
+        self.retranslateUi(Form)
+        QtCore.QMetaObject.connectSlotsByName(Form)
+
+    def retranslateUi(self, Form):
+        _translate = QtCore.QCoreApplication.translate
+        Form.setWindowTitle(_translate("Form", "CandyTranslator"))
+        self.label.setText(_translate("Form", "andy"))
+        self.label_2.setText(_translate("Form", "C"))
+        self.label_3.setText(_translate("Form", "T"))
+        self.label_5.setText(_translate("Form", "Русский"))
+        self.label_6.setText(_translate("Form", "Английский"))
+        self.textEdit.setHtml(_translate("Form",
+                                         "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                         "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                         "p, li { white-space: pre-wrap; }\n"
+                                         "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:16pt; font-weight:400; font-style:normal;\">\n"
+                                         "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:20pt;\"><br /></p></body></html>"))
+        self.textEdit_2.setHtml(_translate("Form",
+                                           "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
+                                           "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
+                                           "p, li { white-space: pre-wrap; }\n"
+                                           "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:16pt; font-weight:400; font-style:normal;\">\n"
+                                           "<p style=\"-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-size:20pt;\"><br /></p></body></html>"))
+        self.pushButton.setText(_translate("Form", "Перевести"))
+        self.label_4.setText(_translate("Form", "ranslator"))
+
+    def program_operation(self):
+        url = 'https://translate.yandex.net/api/v1.5/tr.json/translate?'
+        key = 'trnsl.1.1.20200209T055922Z.f03d103126ba907a.eb91d24257070f1f856fcf650cc7672198088153'
+        if len(self.textEdit.toPlainText()) != 0 and len(self.textEdit_2.toPlainText()) == 0:
+            text = self.textEdit.toPlainText()
+            lang = 'ru-en'
+            r = requests.post(url, data={'key': key, 'text': text, 'lang': lang})
+            self.textEdit_2.setPlainText(json.loads(r.text)['text'][0])
+        elif len(self.textEdit.toPlainText()) == 0 and len(self.textEdit_2.toPlainText()) != 0:
+            text = self.textEdit_2.toPlainText()
+            lang = 'en-ru'
+            r = requests.post(url, data={'key': key, 'text': text, 'lang': lang})
+            self.textEdit.setPlainText(json.loads(r.text)['text'][0])
+        else:
+            text = "НЕ КОРРЕКТНЫЙ ВВОД!"
+            lang = 'en-ru'
+            self.textEdit.setPlainText(text)
+            self.textEdit_2.setPlainText(text)
+
+    def closeEvent(self, e):
+        self.saveSettings()
+        e.accept()
+
+    def loadSettings(self):
+        if self.settings.contains('geometry'):
+            self.setGeometry(self.settings.value('geometry'))
+
+    def saveSettings(self):
+        global candycash, sounds_and_voices
+        global level, message_candy_array, message_user_array, translator
+        global interface, name_user, icon_user
+        con = sqlite3.connect('CandyBase.db')
+        cur = con.cursor()
+        sql = "DELETE FROM resources"
+        cur.execute(sql)
+        sql = "DELETE FROM settings"
+        cur.execute(sql)
+        sql = "DELETE FROM candymarket"
+        cur.execute(sql)
+        info_database = [str(candycash), str(level)]
+        cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)',
+                    (interface, sounds_and_voices, translator,))
+        cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
+        con.commit()
+        with zipfile.ZipFile('CandyBase.zip', 'w') as myzip:
+            myzip.write('CandyBase.db')
+        con.close()
+
 
 
 class CandyProfile(QWidget):
@@ -1671,7 +1843,7 @@ class CandyProfile(QWidget):
 
     def saveSettings(self):
         global candycash, sounds_and_voices
-        global level, message_candy_array, message_user_array
+        global level, message_candy_array, message_user_array, translator
         global interface, name_user, icon_user
         con = sqlite3.connect('CandyBase.db')
         cur = con.cursor()
@@ -1683,7 +1855,7 @@ class CandyProfile(QWidget):
         cur.execute(sql)
         info_database = [str(candycash), str(level)]
         cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
-        cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+        cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator,))
         cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
         con.commit()
         with zipfile.ZipFile('CandyBase.zip', 'w') as myzip:
@@ -1698,8 +1870,8 @@ class Program_operation(Interface1):
 
     def answere_candy(self, message):
         global message_user
-        global game, name_user, icon_user
-        global level
+        global game, name_user, icon_user, interface
+        global level, translator
         global candycash
         global message_candy
         if 'привет' in message_user or 'здравствйте' in message_user or 'прив' in message_user or 'салам' in message_user:
@@ -1869,6 +2041,10 @@ class Program_operation(Interface1):
             elif interface == 2:
                 self.iFace = Interface2()
                 self.iFace.show()
+        elif "перевод" in message_user:
+            if translator == 2:
+                self.translator = Translator()
+                self.translator.show()
         elif "дата" in message_user or "сегодня день" in message_user or "сегодня число" in message_user:
             now = datetime.datetime.now()
             if now.month == 1:
@@ -1942,7 +2118,7 @@ class Program_operation(Interface1):
             cur.execute(sql)
             info_database = [str(candycash), str(level)]
             cur.execute('INSERT INTO resources VALUES(?, ?)', info_database)
-            cur.execute('INSERT INTO candymarket VALUES(?, ?)', (interface, sounds_and_voices,))
+            cur.execute('INSERT INTO candymarket VALUES(?, ?, ?)', (interface, sounds_and_voices, translator,))
             cur.execute('INSERT INTO settings VALUES(?, ?)', (name_user, icon_user,))
             con.commit()
             with zipfile.ZipFile('CandyBase.zip', 'w') as myzip:
@@ -4922,7 +5098,7 @@ class School15(QWidget):  # Окно с информацией о школе №
 
 def ProgramOperation():
     global candycash
-    global level, name_user, icon_user
+    global level, name_user, icon_user, translator
     global interface, sounds_and_voices
     info_database_resources = [0, 0]
     con = sqlite3.connect('CandyBase.db')
@@ -4938,11 +5114,12 @@ def ProgramOperation():
         name_user = str(i[0])
         icon_user = str(i[1])
     con.commit()
-    cur.execute('SELECT [interface], [sounds_and_voices] FROM [candymarket] LIMIT 500')
+    cur.execute('SELECT [interface], [sounds_and_voices], [translator] FROM [candymarket] LIMIT 500')
     temp = cur.fetchall()
     for i in temp:
         interface = i[0]
         sounds_and_voices = i[1]
+        translator = i[2]
     con.commit()
     con.close()
     app = QtWidgets.QApplication([])
