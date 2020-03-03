@@ -7,6 +7,7 @@ import requests
 import json
 import speech_recognition as sr
 import keyboard
+from subprocess import Popen
 import os, requests
 import webbrowser
 import requests
@@ -1489,7 +1490,7 @@ class Interface2_keyboard(QWidget):
         global message_candy
         Program_operation.answere_candy(self, message_user)
         self.print_message()
-        if "вв" and 'код разработчика' in message_user:
+        if "вв" in message_user and 'код разработчика' in message_user:
             self.creatorCode_win()
         if ("pac" in message_user and "man" in message_user) or (
                 "pac" in message_user and "ман" in message_user) or (
@@ -1588,6 +1589,7 @@ class Translator(QWidget):
         super().__init__()
         self.setupUi(self)
         self.pushButton.clicked.connect(self.program_operation)
+        self.pushButton_2.clicked.connect(self.clear_all)
         self.settings = QSettings('CandyAssistent', 'CandyCompany', self)
         self.loadSettings()
 
@@ -1651,6 +1653,12 @@ class Translator(QWidget):
         self.pushButton.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.pushButton.setStyleSheet("QPushButton {border: 2px solid purple;}")
         self.pushButton.setObjectName("pushButton")
+        self.pushButton_2 = QPushButton(self)
+        self.pushButton_2.resize(150, 50)
+        self.pushButton_2.move(280, 130)
+        self.pushButton_2.setText("Очистить всё")
+        self.pushButton_2.setStyleSheet("QPushButton {font-size: 20px; border: 2px solid purple;}")
+        self.pushButton_2.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.label_4 = QtWidgets.QLabel(Form)
         self.label_4.setGeometry(QtCore.QRect(190, 40, 161, 51))
         font = QtGui.QFont()
@@ -1704,6 +1712,10 @@ class Translator(QWidget):
             self.textEdit.setPlainText(text)
             self.textEdit_2.setPlainText(text)
 
+    def clear_all(self):
+        self.textEdit.setPlainText("")
+        self.textEdit_2.setPlainText("")
+
     def closeEvent(self, e):
         self.saveSettings()
         e.accept()
@@ -1733,7 +1745,6 @@ class Translator(QWidget):
         with zipfile.ZipFile('CandyBase.zip', 'w') as myzip:
             myzip.write('CandyBase.db')
         con.close()
-
 
 
 class CandyProfile(QWidget):
@@ -2024,7 +2035,9 @@ class Program_operation(Interface1):
                 "пак" in message_user and "man" in message_user) or (
                 "pac" in message_user and "ман" in message_user):
             self.close()
-            os.system('python files/Pac-man/main.py')
+            open_game = Popen("pythonw files/Pac-man/main.pyw")
+            open_game.wait()
+            # os.system('pythonw files/Pac-man/main.pyw')
             global interface
             global candycash
             con = sqlite3.connect('CandyBase.db')
